@@ -26,9 +26,12 @@ function tool_skin_before_footer() {
     global $PAGE, $DB;
     $pagetypes = explode(',', get_config('tool_skin', 'pagetypes'));
     if (!in_array($PAGE->pagetype, $pagetypes)) {
-        return '';
+       // return '';
     }
     $skins = $DB->get_records('tool_skin', ['pagetype' => $PAGE->pagetype]);
+    if (!$skins) {
+        return;
+    }
     foreach ($skins as $skin) {
         $skintags[] = $skin->tag;
     }
@@ -52,6 +55,22 @@ function tool_skin_before_footer() {
                 }
             }
         }
+    }
+    $content = php_get_string($content);
+    return $content;
+}
+function php_get_string(string $content) {
+    preg_match_all('/get_string\\(.*?\)/', $content, $matches);
+    foreach ($matches[0] as $functioncall) {
+        $toreplace = $functioncall;
+        // Remove spaces and single quotes.
+        $functioncall = str_replace([" ", "'"], "", $functioncall);
+        // Get content between parentheseis.
+        preg_match('/\((.*?)\)/', $functioncall, $matches);
+        $params = explode(',', $matches[1]);
+        $string = get_string($params[0], $params[1]);
+        $string = '"'.$string.'"';
+        $content = str_replace($toreplace, $string, $content);
     }
     return $content;
 

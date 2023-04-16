@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration pages are defined here.
+ * Set default values for a new install
  *
  * @package     tool_skin
  * @category    admin
@@ -33,7 +33,8 @@ if (is_siteadmin()) {
     $settingspage->add(new admin_setting_configtextarea('tool_skin/pagetypes',
         get_string('settings:pagetypes', 'tool_skin'),
         get_string('settings:pagetypes_text', 'tool_skin'),
-        "mod-quiz-attempt", PARAM_RAW, 20, 3));
+        "mod-quiz-attempt, mod-quiz-review",
+         PARAM_RAW, 20, 3));
 
     $ADMIN->add('skincategory',
         new admin_externalpage(

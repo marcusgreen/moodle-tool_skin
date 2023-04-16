@@ -30,11 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_tool_skin_install() {
     global $DB, $CFG;
-    $filecontent = file_get_contents("/admin/tool/skin/db/skin.json");
+    $filecontent = file_get_contents($CFG->wwwroot."/admin/tool/skin/db/skin.json");
     $rows = json_decode($filecontent, true);
     foreach ($rows as $row) {
         $DB->insert_record('tool_skin', $row);
     }
-
 }
 
