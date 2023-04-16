@@ -1,0 +1,8 @@
+[
+{
+    "skinname": "hide incorrect",
+    "tag": "skin-quiz-hide-correct",
+    "pagetype": "mod-quiz-review",
+    "code": "<script>\r\n\/\/ Hide questions with correct response on page mod-quiz-review. \r\nArray.from(document.querySelectorAll(\"body#page-mod-quiz-review .que\")).forEach((question)  => {\r\n  \t\tvar state =\tquestion.querySelector(\".state\").outerText;\r\n  \t\tif (state == get_string('correct', 'question')) {\r\n\t\t\tquestion.remove();\r\n  }\r\n});\r\n\r\n<\/script>"
+}
+]
