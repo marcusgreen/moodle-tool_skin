@@ -28,6 +28,7 @@ $string['pluginname'] = 'Page skin';
 $string['skinedit'] = 'skin edit';
 $string['skin'] = 'skin';
 $string['settings:pagetypes'] = 'Pagetypes';
+$string['settings:skinconfigsettings'] = 'Skin config settings';
 $string['settings:pagetypes_text'] = 'Comma separated list of pagetypes that can be used';
 $string['skinedit:name'] = 'Name';
 $string['skinedit:name_help'] = 'Name help';

@@ -29,8 +29,16 @@ require_once($CFG->libdir.'/clilib.php');
 
 $params = cli_get_params([], []);
 $filecontent = file_get_contents("skin.json");
-$rows = json_decode($filecontent, true);
+$rows = json_decode($filecontent, false);
 global $DB;
 foreach ($rows as $row) {
-    $DB->insert_record('tool_skin',$row);
+    if (!$row->skinname) {
+        continue;
+    }
+    $pagetypes = $row->pagetype;
+    unset($row->pagetype);
+    $skinid = $DB->insert_record('tool_skin', $row);
+    foreach ($pagetypes as $pagetype) {
+        $DB->insert_record('tool_skin_pagetype', ['skin' => $skinid, 'pagetype' => $pagetype]);
+    }
 }

@@ -24,11 +24,19 @@ defined('MOODLE_INTERNAL') || die();
 
 function tool_skin_before_footer() {
     global $PAGE, $DB;
-    $pagetypes = explode(',', get_config('tool_skin', 'pagetypes'));
+    $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
     if (!in_array($PAGE->pagetype, $pagetypes)) {
-       // return '';
+      // return '';
     }
-    $skins = $DB->get_records('tool_skin', ['pagetype' => $PAGE->pagetype]);
+    $sql = 'SELECT skin.id, tag, code FROM {tool_skin} skin
+                       JOIN {tool_skin_pagetype} pagetype
+                       ON skin.id = pagetype.skin
+                       WHERE pagetype.pagetype  IN (
+                       SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
+                            pagetype.pagetype = :pagetype
+                        )';
+     $skins = $DB->get_records_sql($sql, ['pagetype' => $PAGE->pagetype]);
+
     if (!$skins) {
         return;
     }
@@ -46,10 +54,10 @@ function tool_skin_before_footer() {
              WHERE tag.name $insql
                AND ti.itemid = ?";
     $inparams[] = $cmid;
-    $pagetags = $DB->get_records_sql($sql, $inparams);
+    $plugintags = $DB->get_records_sql($sql, $inparams);
     if ($skins) {
         foreach ($skins as $skin) {
-            foreach ($pagetags as $tag) {
+            foreach ($plugintags as $tag) {
                 if ($skin->tag == $tag->tagname) {
                      $content .= $skin->code;
                 }

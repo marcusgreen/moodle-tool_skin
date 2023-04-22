@@ -44,10 +44,10 @@ admin_externalpage_setup('tool_skin_edit');
  * Form for editing skin (css and javascript)
  */
 class tool_skin_edit_form extends moodleform {
+    public $pagetypes = [];
 
     protected function definition() {
         global $PAGE;
-
         $mform = $this->_form;
         // Add the popup CSS hints on pressing ctrl space.
         $PAGE->requires->css('/admin/tool/skin/amd/src/codemirror/lib/codemirror.css');
@@ -68,13 +68,22 @@ class tool_skin_edit_form extends moodleform {
         $mform->setType('skinname', PARAM_TEXT);
         $mform->addHelpButton('skinname', 'skinedit:name', 'tool_skin');
 
+        $options['multiple'] = true;
+        $options['tags'] = true;
+
+        $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
+
+        $pagetypes = array_combine($pagetypes, $pagetypes);
+        $mform->addElement('autocomplete', 'pagetypes', get_string('skinedit:pagetype', 'tool_skin') , $pagetypes, $options);
+        $mform->addHelpButton('pagetypes', 'skinedit:pagetype', 'tool_skin');
+
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
 
-        $mform->addElement('text', 'pagetype', get_string('skinedit:pagetype','tool_skin'));
-        $mform->setType('pagetype', PARAM_TEXT);
-        $mform->addHelpButton('pagetype', 'skinedit:pagetype', 'tool_skin');
+        // $mform->addElement('text', 'pagetype', get_string('skinedit:pagetype','tool_skin'));
+        // $mform->setType('pagetype', PARAM_TEXT);
+        // $mform->addHelpButton('pagetype', 'skinedit:pagetype', 'tool_skin');
 
         $mform->addElement('textarea', 'code', get_string('skinedit:code', 'tool_skin'), ['rows' => 30, 'cols' => 80]);
         $mform->addHelpButton('code', 'skinedit:code', 'tool_skin');
@@ -84,10 +93,9 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('id')->setValue($skin->id);
         $this->_form->getElement('skinname')->setValue($skin->skinname ?? "");
         $this->_form->getElement('tag')->setValue($skin->tag ?? "");
-        $this->_form->getElement('pagetype')->setValue($skin->pagetype ?? "");
         $this->_form->getElement('code')->setValue($skin->code ?? "");
+        $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
-
 }
 
 $recordcount = $DB->count_records('tool_skin');
@@ -105,6 +113,7 @@ $record = get_page_record($page);
 
 if ($delete ) {
     $DB->delete_records('tool_skin', ['id' => $record->id]);
+    $DB->delete_records('tool_skin_pagetype', ['skin' => $record->id]);
     $page--;
     $record = get_page_record($page);
     $recordcount = $DB->count_records('tool_skin');
@@ -119,13 +128,18 @@ if ($data = $mform->get_data()) {
                 'id' => $data->id,
                 'skinname' => $data->skinname,
                 'tag' => $data->tag,
-                'pagetype' => $data->pagetype,
                 'code' => $data->code
             ];
             $DB->update_record('tool_skin', $params);
+            update_pagetypes($data);
             $record = $DB->get_record('tool_skin', ['id' => $data->id]);
     }
 }
+
+$pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], '', 'id, pagetype');
+$pagetypes = array_combine($pagetypes, $pagetypes);
+$record->pagetypes = $pagetypes;
+
 $mform->set_data($record);
 
 echo $OUTPUT->header();
@@ -152,4 +166,15 @@ function get_page_record(int $page) : \stdClass {
         $count++;
     }
     return $record;
+}
+function  update_pagetypes($data) {
+    global $DB;
+    if (!$data->pagetypes) {
+        $DB->delete_records('tool_skin_pagetype', ['skin' => $data->id]);
+        return;
+    }
+    $DB->delete_records('tool_skin_pagetype', ['skin' => $data->id]);
+    foreach ($data->pagetypes as $pagetype) {
+         $DB->insert_record('tool_skin_pagetype', ['skin' => $data->id, 'pagetype' => $pagetype]);
+    }
 }

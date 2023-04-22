@@ -28,17 +28,17 @@ require(__DIR__.'/../../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
 $params = cli_get_params([], []);
-//var_dump($params);
 global $DB, $CFG;
 $records = $DB->get_records('tool_skin');
+
 $recordcount = count($records);
 $text = '['.PHP_EOL;
 $json = [];
 foreach ($records as $key => $record) {
     $json['skinname'] = $record->skinname;
     $json['tag'] = $record->tag;
-    $json['pagetype'] = $record->pagetype;
     $json['code'] = $record->code;
+    $json['pagetype'] = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], null,'id,pagetype');
     $text .= json_encode($json, JSON_PRETTY_PRINT);
     if ($key < $recordcount) {
         $text .= ',';

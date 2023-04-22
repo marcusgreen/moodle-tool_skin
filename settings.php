@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if (is_siteadmin()) {
     $ADMIN->add('tools', new admin_category('skincategory', get_string('pluginname', 'tool_skin')));
-    $settingspage = new admin_settingpage('skinsettings' , get_string('settings'));
+    $settingspage = new admin_settingpage('skinsettings' , get_string('settings:skinconfigsettings', 'tool_skin'));
     $ADMIN->add('skincategory', $settingspage);
 
     $settingspage->add(new admin_setting_configtextarea('tool_skin/pagetypes',

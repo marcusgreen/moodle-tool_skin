@@ -23,7 +23,7 @@
  */
 
 /**
- * Perform the post-install procedures.
+ * Install some example skins
  */
 
 defined('MOODLE_INTERNAL') || die();
