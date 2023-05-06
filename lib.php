@@ -26,7 +26,7 @@ function tool_skin_before_footer() {
     global $PAGE, $DB;
     $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
     if (!in_array($PAGE->pagetype, $pagetypes)) {
-      // return '';
+       return '';
     }
     $sql = 'SELECT skin.id, tag, code FROM {tool_skin} skin
                        JOIN {tool_skin_pagetype} pagetype
@@ -82,4 +82,15 @@ function php_get_string(string $content) {
     }
     return $content;
 
+}
+function tool_skin_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+
+    if ($context->contextlevel != CONTEXT_SYSTEM) {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'local_myplugin', $filearea, $args[0], '/', $args[1]);
+
+    send_stored_file($file);
 }

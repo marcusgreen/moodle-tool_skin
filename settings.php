@@ -27,13 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 
 if (is_siteadmin()) {
     $ADMIN->add('tools', new admin_category('skincategory', get_string('pluginname', 'tool_skin')));
-    $settingspage = new admin_settingpage('skinsettings' , get_string('settings:skinconfigsettings', 'tool_skin'));
+    $settingspage = new admin_settingpage('skinsettings' , get_string('settings:skinsettings', 'tool_skin'));
     $ADMIN->add('skincategory', $settingspage);
 
     $settingspage->add(new admin_setting_configtextarea('tool_skin/pagetypes',
         get_string('settings:pagetypes', 'tool_skin'),
         get_string('settings:pagetypes_text', 'tool_skin'),
-        "mod-quiz-attempt, mod-quiz-review",
+        "mod-quiz-attempt, mod-quiz-review,allpages",
          PARAM_RAW, 20, 3));
 
     $ADMIN->add('skincategory',

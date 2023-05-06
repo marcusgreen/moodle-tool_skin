@@ -32,8 +32,18 @@ function xmldb_tool_skin_install() {
     global $DB, $CFG;
     $filecontent = file_get_contents($CFG->wwwroot."/admin/tool/skin/db/skin.json");
     $rows = json_decode($filecontent, true);
+    global $DB;
     foreach ($rows as $row) {
-        $DB->insert_record('tool_skin', $row);
+        if (!$row->skinname) {
+            continue;
+        }
+        $pagetypes = $row->pagetype;
+        unset($row->pagetype);
+        $skinid = $DB->insert_record('tool_skin', $row);
+        foreach ($pagetypes as $pagetype) {
+            $DB->insert_record('tool_skin_pagetype', ['skin' => $skinid, 'pagetype' => $pagetype]);
+        }
     }
+
 }
 
