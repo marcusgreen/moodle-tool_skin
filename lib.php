@@ -52,9 +52,24 @@ function tool_skin_before_footer() {
               JOIN {tag} tag
                 ON ti.tagid=tag.id
              WHERE tag.name $insql
+               AND ti.itemtype='course_modules'
                AND ti.itemid = ?";
     $inparams[] = $cmid;
     $plugintags = $DB->get_records_sql($sql, $inparams);
+    if (empty($plugintags)) {
+        return false;
+    }
+
+    //select name as tagname  from mdl_tag_instance ti join mdl_tag tag  on ti.tagid=tag.id where tag.name = 'skin-quiz-hide-correct' and ti.itemid=2;
+
+    $fs = get_file_storage();
+    $files = $fs->get_area_files(context_system::instance()->id, 'tool_skin', 'imagefiles', $skin->id);
+    foreach ($files as $file) {
+        if ($file->get_filename() !== ".") {
+             $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false, false);
+             $content .= '<img name='.$file->get_filename(). ' src='.$url->out().' style="display: none" >';
+        }
+    }
     if ($skins) {
         foreach ($skins as $skin) {
             foreach ($plugintags as $tag) {
@@ -64,6 +79,7 @@ function tool_skin_before_footer() {
             }
         }
     }
+
     $content = php_get_string($content);
     return $content;
 }
@@ -90,7 +106,7 @@ function tool_skin_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
     }
 
     $fs = get_file_storage();
-    $file = $fs->get_file($context->id, 'local_myplugin', $filearea, $args[0], '/', $args[1]);
+    $file = $fs->get_file($context->id, 'tool_skin', $filearea, $args[0], '/', $args[1]);
 
     send_stored_file($file);
 }
