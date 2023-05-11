@@ -45,8 +45,6 @@ admin_externalpage_setup('tool_skin_edit');
  */
 class tool_skin_edit_form extends moodleform {
     public $pagetypes = [];
-    //filepicker
-   //https://moodledev.io/docs/apis/subsystems/files/internals
 
     protected function definition() {
         global $PAGE;
@@ -83,17 +81,6 @@ class tool_skin_edit_form extends moodleform {
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
 
-        // $mform->addElement('text', 'pagetype', get_string('skinedit:pagetype','tool_skin'));
-        // $mform->setType('pagetype', PARAM_TEXT);
-        // $mform->addHelpButton('pagetype', 'skinedit:pagetype', 'tool_skin');
-        $maxbytes = 2048;
-        $mform->addElement(
-            'filemanager',
-            'imagefiles',
-            get_string('attachment', 'tool_skin'),
-            null,
-            $this->_customdata['fileareaoptions']);
-
         $mform->addElement('textarea', 'code', get_string('skinedit:code', 'tool_skin'), ['rows' => 30, 'cols' => 80]);
         $mform->addHelpButton('code', 'skinedit:code', 'tool_skin');
         $mform->setType('code', PARAM_RAW);
@@ -104,7 +91,6 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('tag')->setValue($skin->tag ?? "");
         $this->_form->getElement('code')->setValue($skin->code ?? "");
         $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
-        $this->_form->getElement('imagefiles')->setValue($skin->imagefiles);
     }
 }
 
@@ -132,16 +118,8 @@ $baseurl = new moodle_url('/admin/tool/skin/db/skin_edit.php', ['page' => $page]
 
 
 $record->page = $page;
-$fileareaoptions = [
-            'subdirs' => 0,
-            'maxbytes' => $CFG->maxbytes,
-            'areamaxbytes' => 10485760,
-            'maxfiles' => 10,
-            'accepted_types' => ['image'],
-            'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
-];
 
-$mform = new tool_skin_edit_form($baseurl, ['fileareaoptions' => $fileareaoptions]);
+$mform = new tool_skin_edit_form($baseurl);
 
 
 if ($data = $mform->get_data()) {
@@ -155,20 +133,6 @@ if ($data = $mform->get_data()) {
             $DB->update_record('tool_skin', $params);
             update_pagetypes($data);
             $record = $DB->get_record('tool_skin', ['id' => $data->id]);
-
-            file_save_draft_area_files(
-                // The $data->attachments property contains the itemid of the draft file area.
-                $data->imagefiles,
-
-                // The combination of contextid / component / filearea / itemid
-                // form the virtual bucket that file are stored in.
-                $context->id,
-                'tool_skin',
-                'imagefiles',
-                $data->id,
-                $fileareaoptions
-            );
-
     }
 }
 
@@ -176,16 +140,6 @@ $pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id]
 $pagetypes = array_combine($pagetypes, $pagetypes);
 $record->pagetypes = $pagetypes;
 
-$draftitemid = file_get_submitted_draft_itemid('imagefiles');
-file_prepare_draft_area(
-    $draftitemid,
-    $context->id,
-    'tool_skin',
-    'imagefiles',
-    $record->id,
-    $fileareaoptions
-);
-$record->imagefiles = $draftitemid;
 
 $mform->set_data($record);
 
