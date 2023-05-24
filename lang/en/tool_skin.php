@@ -40,3 +40,7 @@ $string['skinedit:pagetype'] = 'Pagetype';
 $string['skinedit:pagetype_help'] = 'Pagetype help';
 $string['skinedit:code'] = 'Code, Ctrl-space for hints';
 $string['skinedit:code_help'] = 'Code help goes here';
+$string['skinedit:javascript'] = 'Javascript';
+$string['skinedit:javascript_help'] = 'Javascript help goes here';
+$string['skinedit:html'] = 'HTML';
+$string['skinedit:html_help'] = 'HTML help goes here';

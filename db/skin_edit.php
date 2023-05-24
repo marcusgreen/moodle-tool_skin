@@ -51,6 +51,7 @@ class tool_skin_edit_form extends moodleform {
         $mform = $this->_form;
         // Add the popup CSS hints on pressing ctrl space.
         $PAGE->requires->css('/admin/tool/skin/amd/src/codemirror/lib/codemirror.css');
+
         $PAGE->requires->css('/admin/tool/skin/amd/src/codemirror/addon/hint/show-hint.css');
         $PAGE->requires->js_call_amd('tool_skin/skin_edit', 'init');
 
@@ -81,9 +82,20 @@ class tool_skin_edit_form extends moodleform {
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
 
-        $mform->addElement('textarea', 'code', get_string('skinedit:code', 'tool_skin'), ['rows' => 30, 'cols' => 80]);
+        $mform->addElement('textarea', 'code', get_string('skinedit:code', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
         $mform->addHelpButton('code', 'skinedit:code', 'tool_skin');
         $mform->setType('code', PARAM_RAW);
+
+
+        $mform->addElement('textarea', 'javascript', get_string('skinedit:javascript', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
+        $mform->addHelpButton('javascript', 'skinedit:javascript', 'tool_skin');
+        $mform->setType('javascript', PARAM_RAW);
+
+
+        $mform->addElement('textarea', 'html', get_string('skinedit:html', 'tool_skin'), ['rows' => 10, 'cols' => 80]);
+        $mform->addHelpButton('javascript', 'skinedit:html', 'tool_skin');
+        $mform->setType('html', PARAM_RAW);
+
     }
     public function set_data($skin) {
         $this->_form->getElement('id')->setValue($skin->id);

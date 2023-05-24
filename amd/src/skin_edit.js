@@ -23,12 +23,36 @@
 import CodeMirror from 'tool_skin/codemirror/lib/codemirror';
 import 'tool_skin/codemirror/addon/hint/show-hint';
 import 'tool_skin/codemirror/addon/hint/css-hint';
+import 'tool_skin/codemirror/addon/hint/javascript-hint';
+import 'tool_skin/codemirror/addon/hint/html-hint';
+
 import 'tool_skin/codemirror/mode/css/css';
+import 'tool_skin/codemirror/mode/javascript/javascript';
+import 'tool_skin/codemirror/mode/xml/xml';
+import 'tool_skin/codemirror/mode/markdown/markdown';
+import 'tool_skin/codemirror/mode/meta/meta';
+import 'tool_skin/codemirror/mode/htmlmixed/htmlmixed';
+
+//        mode: {name: "javascript", globalVars: true},
 
 export const init = () => {
     var editor = CodeMirror.fromTextArea(document.getElementById("id_code"), {
         lineNumbers: true,
+        mode: 'text/css',
         extraKeys: {"Ctrl-Space": "autocomplete"}
           });
-   editor.setSize('100%', 400);
+   editor.setSize('100%', 200);
+
+   var editor = CodeMirror.fromTextArea(document.getElementById("id_javascript"), {
+    lineNumbers: true,
+    mode: {name: "javascript", globalVars: true},
+    extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+
+   var editor = CodeMirror.fromTextArea(document.getElementById("id_html"), {
+    lineNumbers: true,
+    mode: {name: "htmlmixed"},
+    extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+editor.setSize('100%', 200);
 };
