@@ -36,7 +36,7 @@ import 'tool_skin/codemirror/mode/htmlmixed/htmlmixed';
 //        mode: {name: "javascript", globalVars: true},
 
 export const init = () => {
-    var editor = CodeMirror.fromTextArea(document.getElementById("id_code"), {
+    var editor = CodeMirror.fromTextArea(document.getElementById("id_css"), {
         lineNumbers: true,
         mode: 'text/css',
         extraKeys: {"Ctrl-Space": "autocomplete"}

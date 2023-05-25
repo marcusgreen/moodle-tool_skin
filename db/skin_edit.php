@@ -82,9 +82,9 @@ class tool_skin_edit_form extends moodleform {
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
 
-        $mform->addElement('textarea', 'code', get_string('skinedit:code', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
-        $mform->addHelpButton('code', 'skinedit:code', 'tool_skin');
-        $mform->setType('code', PARAM_RAW);
+        $mform->addElement('textarea', 'css', get_string('skinedit:css', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
+        $mform->addHelpButton('css', 'skinedit:css', 'tool_skin');
+        $mform->setType('css', PARAM_RAW);
 
 
         $mform->addElement('textarea', 'javascript', get_string('skinedit:javascript', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
@@ -93,7 +93,7 @@ class tool_skin_edit_form extends moodleform {
 
 
         $mform->addElement('textarea', 'html', get_string('skinedit:html', 'tool_skin'), ['rows' => 10, 'cols' => 80]);
-        $mform->addHelpButton('javascript', 'skinedit:html', 'tool_skin');
+        $mform->addHelpButton('html', 'skinedit:html', 'tool_skin');
         $mform->setType('html', PARAM_RAW);
 
     }
@@ -101,7 +101,9 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('id')->setValue($skin->id);
         $this->_form->getElement('skinname')->setValue($skin->skinname ?? "");
         $this->_form->getElement('tag')->setValue($skin->tag ?? "");
-        $this->_form->getElement('code')->setValue($skin->code ?? "");
+        $this->_form->getElement('css')->setValue($skin->css ?? "");
+        $this->_form->getElement('javascript')->setValue($skin->javascript ?? "");
+        $this->_form->getElement('html')->setValue($skin->html?? "");
         $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
 }
@@ -109,7 +111,7 @@ class tool_skin_edit_form extends moodleform {
 $recordcount = $DB->count_records('tool_skin');
 
 if ($recordcount == 0 || $newrecord) {
-    $id = $DB->insert_record('tool_skin', (object) ['name' => '', 'code' => '']);
+    $id = $DB->insert_record('tool_skin', (object) ['name' => '', 'css' => '']);
     $record = $DB->get_record('tool_skin', ['id' => $id]);
     $page = $DB->count_records('tool_skin');
     $page --;
@@ -140,7 +142,9 @@ if ($data = $mform->get_data()) {
                 'id' => $data->id,
                 'skinname' => $data->skinname,
                 'tag' => $data->tag,
-                'code' => $data->code
+                'css' => $data->css,
+                'javascript' => $data->javascript,
+                'html' => $data->html
             ];
             $DB->update_record('tool_skin', $params);
             update_pagetypes($data);
