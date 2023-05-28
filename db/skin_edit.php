@@ -68,19 +68,21 @@ class tool_skin_edit_form extends moodleform {
         $mform->addElement('text', 'skinname', get_string('name'));
         $mform->setType('skinname', PARAM_TEXT);
         $mform->addHelpButton('skinname', 'skinedit:name', 'tool_skin');
+        $mform->addRule('skinname',  get_string("skinedit:name_required", 'tool_skin'), 'required', '', 'client');
 
         $options['multiple'] = true;
         $options['tags'] = true;
 
         $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
-
         $pagetypes = array_combine($pagetypes, $pagetypes);
         $mform->addElement('autocomplete', 'pagetypes', get_string('skinedit:pagetype', 'tool_skin') , $pagetypes, $options);
         $mform->addHelpButton('pagetypes', 'skinedit:pagetype', 'tool_skin');
+        $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'client');
 
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
+        $mform->addRule('tag',  get_string("skinedit:tag_required", 'tool_skin'), 'required', '', 'client');
 
         $mform->addElement('textarea', 'css', get_string('skinedit:css', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
         $mform->addHelpButton('css', 'skinedit:css', 'tool_skin');
