@@ -37,8 +37,11 @@ $json = [];
 foreach ($records as $key => $record) {
     $json['skinname'] = $record->skinname;
     $json['tag'] = $record->tag;
-    $json['code'] = $record->code;
-    $json['pagetype'] = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], null,'id,pagetype');
+    $json['javascript'] = $record->javascript;
+    $json['css'] = $record->css;
+    $json['html'] = $record->html;
+
+    $json['pagetype'] = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], null, 'id,pagetype');
     $text .= json_encode($json, JSON_PRETTY_PRINT);
     if ($key < $recordcount) {
         $text .= ',';

@@ -30,6 +30,9 @@ require_once($CFG->libdir.'/clilib.php');
 $params = cli_get_params([], []);
 $filecontent = file_get_contents("skin.json");
 $rows = json_decode($filecontent, false);
+if (!$rows) {
+    cli_writeln("Error reading file");
+}
 global $DB;
 foreach ($rows as $row) {
     if (!$row->skinname) {
