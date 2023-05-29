@@ -28,7 +28,7 @@ function tool_skin_before_footer() {
     if (!in_array($PAGE->pagetype, $pagetypes)) {
        return '';
     }
-    $sql = 'SELECT skin.id, tag, code FROM {tool_skin} skin
+    $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
                        JOIN {tool_skin_pagetype} pagetype
                        ON skin.id = pagetype.skin
                        WHERE pagetype.pagetype  IN (
@@ -62,19 +62,13 @@ function tool_skin_before_footer() {
 
     //select name as tagname  from mdl_tag_instance ti join mdl_tag tag  on ti.tagid=tag.id where tag.name = 'skin-quiz-hide-correct' and ti.itemid=2;
 
-    $fs = get_file_storage();
-    $files = $fs->get_area_files(context_system::instance()->id, 'tool_skin', 'imagefiles', $skin->id);
-    foreach ($files as $file) {
-        if ($file->get_filename() !== ".") {
-             $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false, false);
-             $content .= '<img name='.$file->get_filename(). ' src='.$url->out().' style="display: none" >';
-        }
-    }
     if ($skins) {
         foreach ($skins as $skin) {
             foreach ($plugintags as $tag) {
                 if ($skin->tag == $tag->tagname) {
-                     $content .= $skin->code;
+                     $content .= '<script>'.$skin->javascript. '</script>'.PHP_EOL;
+                     $content .= '<style>'.$skin->css. '</style>'.PHP_EOL;
+                     $content .= $skin->html. PHP_EOL;
                 }
             }
         }
