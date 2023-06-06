@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin internal classes, functions and constants are defined here.
+ * Page callback to get any paagetype skins for this module instance.
  * @package     admin_skin
  * @copyright   2023 Marcus Green
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,11 +24,18 @@ defined('MOODLE_INTERNAL') || die();
 
 function tool_skin_before_footer() {
     global $PAGE, $DB;
+
+    // Give up if this pagetype is not in the plugin config.
     $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
     if (!in_array($PAGE->pagetype, $pagetypes)) {
        return '';
     }
-    $skins = get_skins($PAGE->pagetype);
+
+    $cache = cache::make('tool_skin', 'skindata');
+    if (($skins = $cache->get('skins')) === false) {
+        $skins = get_skins($PAGE->pagetype);
+        $cache->set('skins', $skins);
+    }
 
     if (!$skins) {
         return;
@@ -57,9 +64,9 @@ function tool_skin_before_footer() {
         foreach ($skins as $skin) {
             foreach ($plugintags as $tag) {
                 if ($skin->tag == $tag->tagname) {
+                    $content .= $skin->html. PHP_EOL;
                      $content .= '<script>'.$skin->javascript. '</script>'.PHP_EOL;
                      $content .= '<style>'.$skin->css. '</style>'.PHP_EOL;
-                     $content .= $skin->html. PHP_EOL;
                 }
             }
         }
@@ -68,6 +75,13 @@ function tool_skin_before_footer() {
     $content = php_get_string($content);
     return $content;
 }
+/**
+ * Give javascript some of the Moodle core
+ * get_string capability
+ *
+ * @param string $content
+ * @return string
+ */
 function php_get_string(string $content) {
     preg_match_all('/get_string\\(.*?\)/', $content, $matches);
     foreach ($matches[0] as $functioncall) {
@@ -83,6 +97,14 @@ function php_get_string(string $content) {
     }
     return $content;
 }
+
+/**
+ * Get skins avilable for this pagetype
+ *
+ * @param string $pagetype
+ * @return void
+ *
+ */
 function get_skins(string $pagetype) {
     global $DB;
     $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
