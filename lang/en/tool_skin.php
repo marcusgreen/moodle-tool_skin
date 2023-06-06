@@ -46,3 +46,4 @@ $string['skinedit:javascript'] = 'Javascript';
 $string['skinedit:javascript_help'] = 'Javascript help goes here';
 $string['skinedit:html'] = 'HTML';
 $string['skinedit:html_help'] = 'HTML help goes here';
+$string['cachedef_skin'] = 'Description of the skin data cache';

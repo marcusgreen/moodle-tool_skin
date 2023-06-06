@@ -28,14 +28,7 @@ function tool_skin_before_footer() {
     if (!in_array($PAGE->pagetype, $pagetypes)) {
        return '';
     }
-    $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
-                       JOIN {tool_skin_pagetype} pagetype
-                       ON skin.id = pagetype.skin
-                       WHERE pagetype.pagetype  IN (
-                       SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
-                            pagetype.pagetype = :pagetype
-                        )';
-     $skins = $DB->get_records_sql($sql, ['pagetype' => $PAGE->pagetype]);
+    $skins = get_skins($PAGE->pagetype);
 
     if (!$skins) {
         return;
@@ -59,8 +52,6 @@ function tool_skin_before_footer() {
     if (empty($plugintags)) {
         return false;
     }
-
-    //select name as tagname  from mdl_tag_instance ti join mdl_tag tag  on ti.tagid=tag.id where tag.name = 'skin-quiz-hide-correct' and ti.itemid=2;
 
     if ($skins) {
         foreach ($skins as $skin) {
@@ -91,16 +82,16 @@ function php_get_string(string $content) {
         $content = str_replace($toreplace, $string, $content);
     }
     return $content;
-
 }
-function tool_skin_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-
-    if ($context->contextlevel != CONTEXT_SYSTEM) {
-        send_file_not_found();
-    }
-
-    $fs = get_file_storage();
-    $file = $fs->get_file($context->id, 'tool_skin', $filearea, $args[0], '/', $args[1]);
-
-    send_stored_file($file);
+function get_skins(string $pagetype) {
+    global $DB;
+    $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
+            JOIN {tool_skin_pagetype} pagetype
+            ON skin.id = pagetype.skin
+            WHERE pagetype.pagetype  IN (
+            SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
+                pagetype.pagetype = :pagetype
+            )';
+    $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype]);
+    return $skins;
 }
