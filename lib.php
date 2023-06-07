@@ -25,18 +25,16 @@ defined('MOODLE_INTERNAL') || die();
 function tool_skin_before_footer() {
     global $PAGE, $DB;
 
-    // Give up if this pagetype is not in the plugin config.
-    $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
-    if (!in_array($PAGE->pagetype, $pagetypes)) {
-       return '';
-    }
-
     $cache = cache::make('tool_skin', 'skindata');
-    if (($skins = $cache->get('skins')) === false) {
-        $skins = get_skins($PAGE->pagetype);
-        $cache->set('skins', $skins);
+    if (($pagetypes = $cache->get('pagetypes')) === false) {
+        $pagetypes = get_distinct_pagetypes();
+        $cache->set('pagetypes', $pagetypes);
     }
-
+    // Bail out if there are no skins for this pagetype.
+    if (!in_array($PAGE->pagetype, $pagetypes)) {
+        return '';
+    }
+    $skins = get_skins($PAGE->pagetype);
     if (!$skins) {
         return;
     }
@@ -105,7 +103,7 @@ function php_get_string(string $content) {
  * @return void
  *
  */
-function get_skins(string $pagetype) {
+function get_skins(string $pagetype) :array {
     global $DB;
     $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
             JOIN {tool_skin_pagetype} pagetype
@@ -116,4 +114,9 @@ function get_skins(string $pagetype) {
             )';
     $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype]);
     return $skins;
+}
+function get_distinct_pagetypes() {
+    global $DB;
+    $pagetypes = $DB->get_records_sql('SELECT DISTINCT pagetype FROM {tool_skin_pagetype}');
+    return array_keys($pagetypes);
 }

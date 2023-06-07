@@ -4,8 +4,8 @@ Page skins, slightly like a mini theme.
 Site admins can create skins containing javascript and css
 and which page types they can apply to. The pagetype is taken from
 the global $PAGE variable. This script was hugely influenced by the
-work of Dominique Bauer in creating javscript to modify how questions
-appear.  You can see his work at https://dynamiccourseware.org/
+work of Dominique Bauer who has created a huge range of  javscript code to things
+such as modify how Moodle quiz questions appear. You can see his work at https://dynamiccourseware.org/
 
 Techers can cause the skin to be applied by adding a tag in the settings,e.g
 in the tags for a quiz.

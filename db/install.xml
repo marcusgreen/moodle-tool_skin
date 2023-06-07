@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/skin/db" VERSION="20230525" COMMENT="XMLDB file for Moodle admin/tool/jinsert"
+<XMLDB PATH="admin/tool/skin/db" VERSION="20230607" COMMENT="XMLDB file for Moodle admin/tool/skin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -9,7 +9,6 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="skinname" TYPE="char" LENGTH="35" NOTNULL="false" SEQUENCE="false" COMMENT="Name used to refer to this skin"/>
         <FIELD NAME="tag" TYPE="char" LENGTH="35" NOTNULL="false" SEQUENCE="false" COMMENT="Tag that will bring in this code"/>
-        <FIELD NAME="pagetype" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="javascript" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="html" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
