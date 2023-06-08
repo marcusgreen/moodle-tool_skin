@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="tool_skin" COMMENT="Instances to change page skin i.e. css and javascript">
+    <TABLE NAME="tool_skin" COMMENT="Instances to change page skin i.e. css, html and javascript">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="skinname" TYPE="char" LENGTH="35" NOTNULL="false" SEQUENCE="false" COMMENT="Name used to refer to this skin"/>

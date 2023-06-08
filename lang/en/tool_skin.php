@@ -25,16 +25,25 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Page skin';
+$string['uploadjson'] = 'Upload json';
 $string['skinedit'] = 'skin edit';
 $string['skin'] = 'skin';
 $string['attachment'] = 'Attachment';
+$string['settings:showpagetype'] = 'Show pagetypes';
+$string['settings:showpagetype_text'] = 'The pagetype will be output in the page end';
+
+$string['settings:showpagetypeuser'] = 'Show pagetypes user';
+$string['settings:showpagetypeuser_text'] = 'Show pagetypes to this user for debug purposes';
+
 $string['settings:pagetypes'] = 'Pagetypes';
 $string['settings:skinsettings'] = 'Skin config settings';
 $string['settings:pagetypes_text'] = 'Comma separated list of pagetypes that can be used';
+
 $string['skinedit:name'] = 'Name';
 $string['skinedit:name_help'] = 'Name help';
 $string['skinedit:name_required'] = 'Skin name cannot be blank';
 $string['skinedit:pagetype_required'] = 'Page type cannot be blank';
+$string['skinedit:uploadjson'] = 'Upload json';
 $string['skinedit:tag_required'] = 'Tag cannot be blank';
 $string['skinedit:tag'] = 'Tag';
 $string['skinedit:tag_help'] = 'Tag help';
@@ -45,5 +54,5 @@ $string['skinedit:css_help'] = 'CSS help goes here';
 $string['skinedit:javascript'] = 'Javascript';
 $string['skinedit:javascript_help'] = 'Javascript withoutout opening and closing script tags';
 $string['skinedit:html'] = 'HTML';
-$string['skinedit:html_help'] = 'Is output before any javascript. Put links to Content delivery systems here';
+$string['skinedit:html_help'] = 'Is output before any javascript. Put links to Content delivery systems (CDN\'s) here';
 $string['cachedef_skin'] = 'Description of the skin data cache';

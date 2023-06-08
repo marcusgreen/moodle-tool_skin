@@ -23,8 +23,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 function tool_skin_before_footer() {
-    global $PAGE, $DB;
-
+    global $PAGE,$USER, $DB;
+    if (get_config('tool_skin', 'showpagetype')) {
+        if ($USER->username == get_config('tool_skin', 'showpagetypeuser')) {
+            echo '<h1>'.$PAGE->pagetype. '</h1>';
+        }
+    }
     $cache = cache::make('tool_skin', 'skindata');
     if (($pagetypes = $cache->get('pagetypes')) === false) {
         $pagetypes = get_distinct_pagetypes();
@@ -120,3 +124,4 @@ function get_distinct_pagetypes() {
     $pagetypes = $DB->get_records_sql('SELECT DISTINCT pagetype FROM {tool_skin_pagetype}');
     return array_keys($pagetypes);
 }
+

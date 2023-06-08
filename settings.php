@@ -36,6 +36,14 @@ if (is_siteadmin()) {
         "mod-quiz-attempt, mod-quiz-review,allpages",
          PARAM_RAW, 20, 3));
 
+    $settingspage->add(new admin_setting_configcheckbox('tool_skin/showpagetype',
+         get_string('settings:showpagetype', 'tool_skin'),
+         get_string('settings:showpagetype_text', 'tool_skin') , 0));
+    $settingspage->add(new admin_setting_configtext('tool_skin/showpagetypeuser',
+         get_string('settings:showpagetypeuser', 'tool_skin'),
+         get_string('settings:showpagetypeuser_text', 'tool_skin'),
+         "admin", PARAM_RAW, 10, ));
+
     $ADMIN->add('skincategory',
         new admin_externalpage(
                 'tool_skin_edit',

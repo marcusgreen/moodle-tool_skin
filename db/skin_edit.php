@@ -27,10 +27,15 @@ require_once('../../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir.'/formslib.php');
 
+use tool_skin\jsonupload_form;
+
 $page   = optional_param('page', 0, PARAM_INT);
 $newrecord = optional_param('newrecord', '', PARAM_TEXT);
 $save = optional_param('save', '', PARAM_TEXT);
 $delete = optional_param('delete', '', PARAM_TEXT);
+
+$jsonsubmit = optional_param('jsonsubmit', '', PARAM_TEXT);
+$savejson = optional_param('savejson', '', PARAM_TEXT);
 
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -62,6 +67,7 @@ class tool_skin_edit_form extends moodleform {
         $navbuttons[] = $mform->createElement('submit', 'cancel', get_string('cancel'));
         $navbuttons[] = $mform->createElement('submit', 'newrecord', get_string('new'));
         $navbuttons[] = $mform->createElement('submit', 'delete', get_string('delete'));
+        $navbuttons[] = $mform->createElement('submit', 'uploadjson', get_string('skinedit:uploadjson', 'tool_skin'));
 
         $mform->addGroup($navbuttons);
 
@@ -88,11 +94,9 @@ class tool_skin_edit_form extends moodleform {
         $mform->addHelpButton('css', 'skinedit:css', 'tool_skin');
         $mform->setType('css', PARAM_RAW);
 
-
         $mform->addElement('textarea', 'javascript', get_string('skinedit:javascript', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
         $mform->addHelpButton('javascript', 'skinedit:javascript', 'tool_skin');
         $mform->setType('javascript', PARAM_RAW);
-
 
         $mform->addElement('textarea', 'html', get_string('skinedit:html', 'tool_skin'), ['rows' => 10, 'cols' => 80]);
         $mform->addHelpButton('html', 'skinedit:html', 'tool_skin');
@@ -109,7 +113,11 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
 }
-
+$uploadform = new  jsonupload_form();
+if ($data = $uploadform->get_data()) {
+    $content = $uploadform->get_file_content('jsonfile');
+    $uploadform->process_json($content);
+}
 $recordcount = $DB->count_records('tool_skin');
 
 if ($recordcount == 0 || $newrecord) {
@@ -132,11 +140,9 @@ if ($delete ) {
 }
 $baseurl = new moodle_url('/admin/tool/skin/db/skin_edit.php', ['page' => $page]);
 
-
 $record->page = $page;
 
 $mform = new tool_skin_edit_form($baseurl);
-
 
 if ($data = $mform->get_data()) {
     if (isset($data->save)) {
@@ -152,19 +158,28 @@ if ($data = $mform->get_data()) {
             update_pagetypes($data);
             $record = $DB->get_record('tool_skin', ['id' => $data->id]);
     }
+    if (isset($data->uploadjson)) {
+        $uploadjson = true;
+    }
 }
+
 
 $pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], '', 'id, pagetype');
 $pagetypes = array_combine($pagetypes, $pagetypes);
 $record->pagetypes = $pagetypes;
 
-
 $mform->set_data($record);
 
-
 echo $OUTPUT->header();
-echo $OUTPUT->paging_bar($recordcount, $page, 1, $baseurl);
-$mform->display();
+if ($uploadjson) {
+    $uploadform = new  jsonupload_form();
+    $uploadform->display();
+} else {
+    echo $OUTPUT->paging_bar($recordcount, $page, 1, $baseurl);
+
+    $mform->display();
+
+}
 echo $OUTPUT->footer();
 
 /**
