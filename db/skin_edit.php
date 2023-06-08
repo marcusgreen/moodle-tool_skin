@@ -28,6 +28,8 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir.'/formslib.php');
 
 use tool_skin\jsonupload_form;
+use tool_skin\utils;
+
 
 $page   = optional_param('page', 0, PARAM_INT);
 $newrecord = optional_param('newrecord', '', PARAM_TEXT);
@@ -36,6 +38,8 @@ $delete = optional_param('delete', '', PARAM_TEXT);
 
 $jsonsubmit = optional_param('jsonsubmit', '', PARAM_TEXT);
 $savejson = optional_param('savejson', '', PARAM_TEXT);
+$downloadjson = optional_param('downloadjson', '', PARAM_TEXT);
+
 
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -68,6 +72,7 @@ class tool_skin_edit_form extends moodleform {
         $navbuttons[] = $mform->createElement('submit', 'newrecord', get_string('new'));
         $navbuttons[] = $mform->createElement('submit', 'delete', get_string('delete'));
         $navbuttons[] = $mform->createElement('submit', 'uploadjson', get_string('skinedit:uploadjson', 'tool_skin'));
+        $navbuttons[] = $mform->createElement('submit', 'downloadjson', get_string('skinedit:downloadjson', 'tool_skin'));
 
         $mform->addGroup($navbuttons);
 
@@ -161,6 +166,9 @@ if ($data = $mform->get_data()) {
     if (isset($data->uploadjson)) {
         $uploadjson = true;
     }
+    if (isset($data->downloadjson)) {
+        do_download($data);
+    }
 }
 
 
@@ -176,11 +184,15 @@ if ($uploadjson) {
     $uploadform->display();
 } else {
     echo $OUTPUT->paging_bar($recordcount, $page, 1, $baseurl);
-
     $mform->display();
-
 }
-echo $OUTPUT->footer();
+if ($downloadjson) {
+    do_download($data);
+}
+if (!$downloadjson) {
+    echo $OUTPUT->footer();
+}
+
 
 /**
  * Get the database record to match the current page
@@ -212,4 +224,15 @@ function  update_pagetypes($data) {
     foreach ($data->pagetypes as $pagetype) {
          $DB->insert_record('tool_skin_pagetype', ['skin' => $data->id, 'pagetype' => $pagetype]);
     }
+}
+
+function do_download($data) {
+    $json = utils::get_skin_json($data->id);
+    $filename = clean_filename($data->skinname);
+    $filename .= '.json';
+    header('Content-disposition: attachment; filename=' . $filename);
+    header('Content-Type: application/json; charset: utf-8');
+
+    echo $json;
+    exit;
 }

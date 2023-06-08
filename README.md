@@ -8,7 +8,7 @@ work of Dominique Bauer who has created a huge range of  javscript code to do th
 such as modify how Moodle quiz questions appear. You can see his work at https://dynamiccourseware.org/. These skins will not work with the Mobile app as it uses
 a different way to manage output.
 
-Techers can cause the skin to be applied by adding a tag in the settings,e.g
+Teachers can cause the skin to be applied by adding a tag in the settings,e.g
 in the tags for a quiz.
 
 ## Installing via uploaded ZIP file ##

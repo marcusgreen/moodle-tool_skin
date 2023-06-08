@@ -25,15 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Page skin';
-$string['uploadjson'] = 'Upload json';
+$string['skinedit:uploadjson'] = 'Upload json';
+$string['skinedit:downloadjson'] = 'Download json';
+
 $string['skinedit'] = 'skin edit';
 $string['skin'] = 'skin';
 $string['attachment'] = 'Attachment';
 $string['settings:showpagetype'] = 'Show pagetypes';
-$string['settings:showpagetype_text'] = 'The pagetype will be output in the page end';
-
-$string['settings:showpagetypeuser'] = 'Show pagetypes user';
-$string['settings:showpagetypeuser_text'] = 'Show pagetypes to this user for debug purposes';
+$string['settings:showpagetype_text'] = 'The pagetype will be output in the page end if set and the user is an admin. For debug/development';
 
 $string['settings:pagetypes'] = 'Pagetypes';
 $string['settings:skinsettings'] = 'Skin config settings';
@@ -54,5 +53,5 @@ $string['skinedit:css_help'] = 'CSS help goes here';
 $string['skinedit:javascript'] = 'Javascript';
 $string['skinedit:javascript_help'] = 'Javascript withoutout opening and closing script tags';
 $string['skinedit:html'] = 'HTML';
-$string['skinedit:html_help'] = 'Is output before any javascript. Put links to Content delivery systems (CDN\'s) here';
+$string['skinedit:html_help'] = 'HTML put here is output before any javascript in the skin. Put links to Content delivery systems (CDN\'s) here';
 $string['cachedef_skin'] = 'Description of the skin data cache';

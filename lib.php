@@ -25,8 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 function tool_skin_before_footer() {
     global $PAGE,$USER, $DB;
     if (get_config('tool_skin', 'showpagetype')) {
-        if ($USER->username == get_config('tool_skin', 'showpagetypeuser')) {
-            echo '<h1>'.$PAGE->pagetype. '</h1>';
+        if (is_siteadmin($USER->id)) {
+            echo '<h1>pagetype:'.$PAGE->pagetype. '</h1>';
         }
     }
     $cache = cache::make('tool_skin', 'skindata');
@@ -34,14 +34,11 @@ function tool_skin_before_footer() {
         $pagetypes = get_distinct_pagetypes();
         $cache->set('pagetypes', $pagetypes);
     }
-    // Bail out if there are no skins for this pagetype.
+    // Bail out if there are no skins with pagetype.
     if (!in_array($PAGE->pagetype, $pagetypes)) {
         return '';
     }
     $skins = get_skins($PAGE->pagetype);
-    if (!$skins) {
-        return;
-    }
     foreach ($skins as $skin) {
         $skintags[] = $skin->tag;
     }
