@@ -27,7 +27,7 @@ require_once('../../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir.'/formslib.php');
 
-use tool_skin\jsonupload_form;
+use tool_skin\import_form;
 use tool_skin\utils;
 
 
@@ -38,7 +38,8 @@ $delete = optional_param('delete', '', PARAM_TEXT);
 
 $jsonsubmit = optional_param('jsonsubmit', '', PARAM_TEXT);
 $savejson = optional_param('savejson', '', PARAM_TEXT);
-$downloadjson = optional_param('downloadjson', '', PARAM_TEXT);
+$import = optional_param('import', '', PARAM_TEXT);
+$export = optional_param('export', '', PARAM_TEXT);
 
 
 $context = context_system::instance();
@@ -71,10 +72,24 @@ class tool_skin_edit_form extends moodleform {
         $navbuttons[] = $mform->createElement('submit', 'cancel', get_string('cancel'));
         $navbuttons[] = $mform->createElement('submit', 'newrecord', get_string('new'));
         $navbuttons[] = $mform->createElement('submit', 'delete', get_string('delete'));
-        $navbuttons[] = $mform->createElement('submit', 'uploadjson', get_string('skinedit:uploadjson', 'tool_skin'));
-        $navbuttons[] = $mform->createElement('submit', 'downloadjson', get_string('skinedit:downloadjson', 'tool_skin'));
 
         $mform->addGroup($navbuttons);
+
+        $mform->addElement('header', 'importexportheader', get_string('skinedit:importexportheader', 'tool_skin'));
+        $mform->addHelpButton('importexportheader', 'skinedit:importexportheader', 'tool_skin');
+
+        $mform->setExpanded('importexportheader', false);
+
+        $mform->addElement('submit', 'import', get_string('skinedit:import', 'tool_skin'));
+        $mform->addHelpButton('import', 'skinedit:import', 'tool_skin');
+
+        $mform->addElement('submit', 'export', get_string('skinedit:export', 'tool_skin'));
+        $mform->addHelpButton('export', 'skinedit:export', 'tool_skin');
+
+        $mform->addElement('submit', 'exportall', get_string('skinedit:exportall', 'tool_skin'));
+        $mform->addHelpButton('exportall', 'skinedit:exportall', 'tool_skin');
+
+        $mform->addElement('header', 'editheader', get_string('skinedit:editheader', 'tool_skin'));
 
         $mform->addElement('text', 'skinname', get_string('name'));
         $mform->setType('skinname', PARAM_TEXT);
@@ -118,10 +133,10 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
 }
-$uploadform = new  jsonupload_form();
-if ($data = $uploadform->get_data()) {
-    $content = $uploadform->get_file_content('jsonfile');
-    $uploadform->process_json($content);
+$importform = new  import_form();
+if ($data = $importform->get_data()) {
+    $content = $importform->get_file_content('jsonfile');
+    $importform->process_json($content);
 }
 $recordcount = $DB->count_records('tool_skin');
 
@@ -163,10 +178,10 @@ if ($data = $mform->get_data()) {
             update_pagetypes($data);
             $record = $DB->get_record('tool_skin', ['id' => $data->id]);
     }
-    if (isset($data->uploadjson)) {
-        $uploadjson = true;
+    if (isset($data->upload)) {
+        $upload = true;
     }
-    if (isset($data->downloadjson)) {
+    if (isset($data->export)) {
         do_download($data);
     }
 }
@@ -179,17 +194,17 @@ $record->pagetypes = $pagetypes;
 $mform->set_data($record);
 
 echo $OUTPUT->header();
-if ($uploadjson) {
-    $uploadform = new  jsonupload_form();
-    $uploadform->display();
+if ($import) {
+    $importform = new  import_form();
+    $importform->display();
 } else {
     echo $OUTPUT->paging_bar($recordcount, $page, 1, $baseurl);
     $mform->display();
 }
-if ($downloadjson) {
+if ($export) {
     do_download($data);
 }
-if (!$downloadjson) {
+if (!$export) {
     echo $OUTPUT->footer();
 }
 
@@ -227,7 +242,7 @@ function  update_pagetypes($data) {
 }
 
 function do_download($data) {
-    $json = utils::get_skin_json($data->id);
+    $json = utils::get_skin_json([$data]);
     $filename = clean_filename($data->skinname);
     $filename .= '.json';
     header('Content-disposition: attachment; filename=' . $filename);

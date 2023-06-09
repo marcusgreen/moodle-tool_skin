@@ -25,10 +25,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Page skin';
-$string['skinedit:uploadjson'] = 'Upload json';
-$string['skinedit:downloadjson'] = 'Download json';
 
-$string['skinedit'] = 'skin edit';
+$string['skinedit:import'] = 'Import';
+$string['skinedit:import_help'] = 'Import help';
+
+$string['skinedit:export'] = 'Export';
+$string['skinedit:export_help'] = 'Export help';
+
+$string['skinedit:exportall'] = 'Export all';
+$string['skinedit:exportall_help'] = 'Export all help';
+
+
+$string['skinedit'] = 'Skin edit';
 $string['skin'] = 'skin';
 $string['attachment'] = 'Attachment';
 $string['settings:showpagetype'] = 'Show pagetypes';
@@ -39,15 +47,20 @@ $string['settings:skinsettings'] = 'Skin config settings';
 $string['settings:pagetypes_text'] = 'Comma separated list of pagetypes that can be used';
 
 $string['skinedit:name'] = 'Name';
+$string['skinedit:importexportheader'] = 'Import/Export';
+$string['skinedit:importexportheader_help'] = 'Import  and export in json format. Export the skin currently being edited or all skins in the plugin';
+
+$string['skinedit:editheader'] = 'Edit';
+
 $string['skinedit:name_help'] = 'Name help';
 $string['skinedit:name_required'] = 'Skin name cannot be blank';
 $string['skinedit:pagetype_required'] = 'Page type cannot be blank';
-$string['skinedit:uploadjson'] = 'Upload json';
+$string['skinedit:upload'] = 'Upload';
 $string['skinedit:tag_required'] = 'Tag cannot be blank';
 $string['skinedit:tag'] = 'Tag';
 $string['skinedit:tag_help'] = 'Tag help';
 $string['skinedit:pagetype'] = 'Pagetype';
-$string['skinedit:pagetype_help'] = 'Pagetype help';
+$string['skinedit:pagetype_help'] = 'Pagetype name used internally by Moodle. If the skin setting showpagetype is set, the pagetype will be shown at the end of each page to admin users.';
 $string['skinedit:css'] = 'CSS, Ctrl-space for hints';
 $string['skinedit:css_help'] = 'CSS help goes here';
 $string['skinedit:javascript'] = 'Javascript';

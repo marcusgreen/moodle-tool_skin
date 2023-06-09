@@ -29,11 +29,11 @@ require_once($CFG->libdir.'/clilib.php');
 
 $params = cli_get_params([], []);
 global $DB, $CFG;
-$records = $DB->get_records('tool_skin');
 
 $recordcount = count($records);
 $text = '['.PHP_EOL;
 $json = [];
+$records = $DB->get_records('tool_skin');
 foreach ($records as $key => $record) {
     $json['skinname'] = $record->skinname;
     $json['tag'] = $record->tag;

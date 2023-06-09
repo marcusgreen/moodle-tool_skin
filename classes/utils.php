@@ -22,20 +22,21 @@ class utils {
      * @param int $skinid
      * @return string
      */
-    public static function get_skin_json(int $skinid) : string {
-        global $DB;
-        $record = $DB->get_record('tool_skin', ['id' => $skinid]);
-        $json['skinname'] = $record->skinname;
-        $json['tag'] = $record->tag;
-        $json['javascript'] = $record->javascript;
-        $json['css'] = $record->css;
-        $json['html'] = $record->html;
-
-        $json['pagetype'] = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], null, 'id,pagetype');
-        $text = '[';
-        $text .= json_encode($json, JSON_PRETTY_PRINT);
-        $text .= ']';
-        return $text;
+    public static function get_skin_json(array $data) : string {
+        $json = '[';
+        foreach ($data as $record) {
+            $text['skinname'] = $record->skinname;
+            $text['tag'] = $record->tag;
+            $text['javascript'] = $record->javascript;
+            $text['css'] = $record->css;
+            $text['html'] = $record->html;
+            foreach ($record->pagetypes as $pagetype) {
+                $text['pagetype'][] = $pagetype;
+            }
+        }
+        $json .= json_encode($text, JSON_PRETTY_PRINT);
+        $json .= ']';
+        return $json;
     }
 
 }
