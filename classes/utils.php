@@ -38,5 +38,21 @@ class utils {
         $json .= ']';
         return $json;
     }
+    public static function import_skin_file(string $filename) {
+        global $DB, $CFG;
+        $filecontent = file_get_contents($CFG->wwwroot.'/'.$filename);
+        $rows = json_decode($filecontent);
+        foreach ($rows as $row) {
+            if (!$row->skinname) {
+                continue;
+            }
+            $pagetypes = $row->pagetype;
+            unset($row->pagetype);
+            $skinid = $DB->insert_record('tool_skin', $row);
+            foreach ($pagetypes as $pagetype) {
+                $DB->insert_record('tool_skin_pagetype', ['skin' => $skinid, 'pagetype' => $pagetype]);
+            }
+        }
+    }
 
 }

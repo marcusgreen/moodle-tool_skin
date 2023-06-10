@@ -40,6 +40,7 @@ $jsonsubmit = optional_param('jsonsubmit', '', PARAM_TEXT);
 $savejson = optional_param('savejson', '', PARAM_TEXT);
 $import = optional_param('import', '', PARAM_TEXT);
 $export = optional_param('export', '', PARAM_TEXT);
+$exportall = optional_param('exportall', '', PARAM_TEXT);
 
 
 $context = context_system::instance();
@@ -182,7 +183,10 @@ if ($data = $mform->get_data()) {
         $upload = true;
     }
     if (isset($data->export)) {
-        do_download($data);
+        do_download($data->id);
+    }
+    if (isset($data->exportall)) {
+        do_download();
     }
 }
 
@@ -241,13 +245,35 @@ function  update_pagetypes($data) {
     }
 }
 
-function do_download($data) {
-    $json = utils::get_skin_json([$data]);
-    $filename = clean_filename($data->skinname);
+function do_download(int $id = null) {
+    global $DB;
+    $filename = '';
+    if ($id) {
+        $data = $DB->get_records('tool_skin', ['id' => $id]);
+        $filename = reset($data)->skinname;
+    } else {
+         $data = $DB->get_records('tool_skin');
+         $filename = 'skins';
+    }
+    $json = '[';
+    $recordcount = count($data);
+    foreach ($data as $key => $record) {
+        $text['skinname'] = $record->skinname;
+        $text['tag'] = $record->tag;
+        $text['javascript'] = $record->javascript;
+        $text['css'] = $record->css;
+        $text['html'] = $record->html;
+        $text['pagetype'] = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], null, 'id,pagetype');
+        $json .= json_encode($text, JSON_PRETTY_PRINT);
+        if ($key < $recordcount) {
+            $json .= ',';
+        }
+    }
+    $json .= ']';
+
     $filename .= '.json';
     header('Content-disposition: attachment; filename=' . $filename);
     header('Content-Type: application/json; charset: utf-8');
-
     echo $json;
     exit;
 }
