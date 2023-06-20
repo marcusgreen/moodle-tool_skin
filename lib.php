@@ -20,10 +20,13 @@
  * @copyright   2023 Marcus Green
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-
 function tool_skin_before_footer() {
-    global $PAGE,$USER, $DB;
+    global $PAGE, $USER, $DB;
+    $cmid = optional_param('cmid', null, PARAM_INT);
+    $id = optional_param('id', null , PARAM_INT);
+
+    $cmid = $cmid ?? $id;
+
     if (get_config('tool_skin', 'showpagetype')) {
         if (is_siteadmin($USER->id)) {
             echo '<h1>pagetype:'.$PAGE->pagetype. '</h1>';
@@ -34,17 +37,26 @@ function tool_skin_before_footer() {
         $pagetypes = get_distinct_pagetypes();
         $cache->set('pagetypes', $pagetypes);
     }
-    // Bail out if there are no skins with pagetype.
-    if (!in_array($PAGE->pagetype, $pagetypes)) {
+
+    $parts = explode('-', $PAGE->pagetype);
+    $plugintype = $parts[0].'-'.$parts[1];
+
+    // Bail out if there are no skins with pagetype, or plugins with pagetype
+    $pagetypeskins = in_array($PAGE->pagetype, $pagetypes);
+    $plugintypeskins = in_array($plugintype, $pagetypes);
+
+    if (!$pagetypeskins && !$plugintypeskins) {
         return '';
     }
+
     $skins = get_skins($PAGE->pagetype);
+    $skins = array_merge($skins, get_skins($plugintype));
+
     foreach ($skins as $skin) {
         $skintags[] = $skin->tag;
     }
 
     $content = '';
-    $cmid = $PAGE->url->params()['cmid'];
     list($insql, $inparams) = $DB->get_in_or_equal($skintags);
     $sql = "SELECT name as tagname
               FROM {tag_instance} ti
@@ -111,8 +123,9 @@ function get_skins(string $pagetype) :array {
             ON skin.id = pagetype.skin
             WHERE pagetype.pagetype  IN (
             SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
-                pagetype.pagetype = :pagetype
+                pagetype.pagetype like  :pagetype
             )';
+
     $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype]);
     return $skins;
 }
