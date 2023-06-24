@@ -29,7 +29,8 @@ function tool_skin_before_footer() {
 
     if (get_config('tool_skin', 'showpagetype')) {
         if (is_siteadmin($USER->id)) {
-            echo '<h1>pagetype:'.$PAGE->pagetype. '</h1>';
+            $msg = 'page-type mavg:'.$PAGE->pagetype;
+            \core\notification::add($msg, \core\notification::WARNING);
         }
     }
     $cache = cache::make('tool_skin', 'skindata');
@@ -41,7 +42,7 @@ function tool_skin_before_footer() {
     $parts = explode('-', $PAGE->pagetype);
     $plugintype = $parts[0].'-'.$parts[1];
 
-    // Bail out if there are no skins with pagetype, or plugins with pagetype
+    // Bail out if there are no skins with pagetype, or plugins with pagetype.
     $pagetypeskins = in_array($PAGE->pagetype, $pagetypes);
     $plugintypeskins = in_array($plugintype, $pagetypes);
 

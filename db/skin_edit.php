@@ -109,7 +109,6 @@ class tool_skin_edit_form extends moodleform {
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
-        $mform->addRule('tag',  get_string("skinedit:tag_required", 'tool_skin'), 'required', '', 'client');
 
         $mform->addElement('textarea', 'css', get_string('skinedit:css', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
         $mform->addHelpButton('css', 'skinedit:css', 'tool_skin');

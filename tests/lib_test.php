@@ -21,23 +21,25 @@
  * @copyright  2023 Marcus Green
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_moodlenet;
+namespace tool_skin;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 /**
- * Test moodlenet functions
+ * Test tool_skin functions
  */
 class lib_test extends \advanced_testcase {
 
     /**
      * Parse javascript for get_strings like php
-     *
+     * @covers ::php_get_string()
      * @return void
      */
     public function test_php_get_string() {
+        $content = "get_string('changesaved')";
+        $returnstring = php_get_string($content);
         $returnval = true;
         return $returnval;
     }
