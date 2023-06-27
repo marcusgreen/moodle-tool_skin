@@ -1,4 +1,4 @@
-# Moodle Page skin tool plugin by Marcus Green#
+# Moodle Page skin tool plugin by Marcus Green
 
 Page skins, slightly like a mini theme.
 Site admins can create skins containing javascript and css
