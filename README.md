@@ -5,6 +5,8 @@ Site admins can create skins containing javascript and css
 and which page types they can apply to. The pagetype is taken from
 the global $PAGE variable.
 
+See here for more documentation https://github.com/marcusgreen/moodle-tool_skin/wiki/Home/_edit
+
 Techers can cause the skin to be applied by adding a tag in the settings,e.g
 in the tags for a quiz.
 
