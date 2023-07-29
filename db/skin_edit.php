@@ -95,7 +95,7 @@ class tool_skin_edit_form extends moodleform {
         $mform->addElement('text', 'skinname', get_string('name'));
         $mform->setType('skinname', PARAM_TEXT);
         $mform->addHelpButton('skinname', 'skinedit:name', 'tool_skin');
-        $mform->addRule('skinname',  get_string("skinedit:name_required", 'tool_skin'), 'required', '', 'client');
+        $mform->addRule('skinname',  get_string("skinedit:name_required", 'tool_skin'), 'required', '', 'server');
 
         $options['multiple'] = true;
         $options['tags'] = true;
@@ -104,7 +104,7 @@ class tool_skin_edit_form extends moodleform {
         $pagetypes = array_combine($pagetypes, $pagetypes);
         $mform->addElement('autocomplete', 'pagetypes', get_string('skinedit:pagetype', 'tool_skin') , $pagetypes, $options);
         $mform->addHelpButton('pagetypes', 'skinedit:pagetype', 'tool_skin');
-        $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'client');
+        $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'server');
 
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
@@ -141,7 +141,7 @@ if ($data = $importform->get_data()) {
 $recordcount = $DB->count_records('tool_skin');
 
 if ($recordcount == 0 || $newrecord) {
-    $id = $DB->insert_record('tool_skin', (object) ['name' => '', 'css' => '']);
+    $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'css' => '']);
     $record = $DB->get_record('tool_skin', ['id' => $id]);
     $page = $DB->count_records('tool_skin');
     $page --;
@@ -157,6 +157,11 @@ if ($delete ) {
     $page--;
     $record = get_page_record($page);
     $recordcount = $DB->count_records('tool_skin');
+    if ($recordcount == 0) {
+        $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'css' => '']);
+        $record = $DB->get_record('tool_skin', ['id' => $id]);
+        $recordcount = 1;
+    }
 }
 $baseurl = new moodle_url('/admin/tool/skin/db/skin_edit.php', ['page' => $page]);
 
@@ -190,9 +195,7 @@ if ($data = $mform->get_data()) {
 }
 
 
-$pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], '', 'id, pagetype');
-$pagetypes = array_combine($pagetypes, $pagetypes);
-$record->pagetypes = $pagetypes;
+$record = get_pagetypes($record);
 
 $mform->set_data($record);
 
@@ -242,6 +245,17 @@ function  update_pagetypes($data) {
     foreach ($data->pagetypes as $pagetype) {
          $DB->insert_record('tool_skin_pagetype', ['skin' => $data->id, 'pagetype' => $pagetype]);
     }
+}
+function get_pagetypes($record) {
+    global $DB;
+    $pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], '', 'id, pagetype');
+    $pagetypes = array_combine($pagetypes, $pagetypes);
+    if (count($pagetypes) > 0 ) {
+        $record->pagetypes = $pagetypes;
+    } else {
+        $record->pagetypes = [];
+    }
+    return $record;
 }
 
 function do_download(int $id = null) {
