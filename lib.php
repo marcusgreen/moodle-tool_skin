@@ -103,11 +103,15 @@ function php_get_string(string $content) {
         // Get content between parentheseis.
         preg_match('/\((.*?)\)/', $functioncall, $matches);
         $params = explode(',', $matches[1]);
-        $string = get_string($params[0], $params[1]);
+        if (count($params) == 1) {
+            $string = get_string($params[0]);
+        } else {
+            $string = get_string($params[0], $params[1]);
+        }
         $string = '"'.$string.'"';
         $content = str_replace($toreplace, $string, $content);
     }
-    return $content;
+    return trim($content,'"');
 }
 
 /**

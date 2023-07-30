@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once(__DIR__.'/../lib.php');
+
 /**
  * Test tool_skin functions
  */
@@ -38,9 +40,8 @@ class lib_test extends \advanced_testcase {
      * @return void
      */
     public function test_php_get_string() {
-        $content = "get_string('changesaved')";
+        $content = "get_string('pluginname', 'tool_skin)";
         $returnstring = php_get_string($content);
-        $returnval = true;
-        return $returnval;
+        $this->assertEquals("Page skin", $returnstring);
     }
 }
