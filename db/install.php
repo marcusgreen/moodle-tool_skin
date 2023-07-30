@@ -28,7 +28,7 @@
 
 function xmldb_tool_skin_install() {
     global $DB, $CFG;
-    $filecontent = file_get_contents($CFG->wwwroot."/admin/tool/skin/db/skins.json");
+    $filecontent = file_get_contents($CFG->dirroot."/admin/tool/skin/db/skins.json");
     $rows = json_decode($filecontent);
     foreach ($rows as $row) {
         if (!$row->skinname) {
