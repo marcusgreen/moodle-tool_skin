@@ -111,7 +111,7 @@ function php_get_string(string $content) {
         $string = '"'.$string.'"';
         $content = str_replace($toreplace, $string, $content);
     }
-    return trim($content,'"');
+    return trim($content, '"');
 }
 
 /**
@@ -139,4 +139,3 @@ function get_distinct_pagetypes() {
     $pagetypes = $DB->get_records_sql('SELECT DISTINCT pagetype FROM {tool_skin_pagetype}');
     return array_keys($pagetypes);
 }
-
