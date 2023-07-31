@@ -55,8 +55,16 @@ admin_externalpage_setup('tool_skin_edit');
  * Form for editing skin (css and javascript)
  */
 class tool_skin_edit_form extends moodleform {
+    /**
+     * Undocumented variable
+     *
+     * @var array
+     */
     public $pagetypes = [];
 
+    /**
+     * Interface elements of the editing form.
+     */
     protected function definition() {
         global $PAGE;
         $mform = $this->_form;
@@ -123,6 +131,12 @@ class tool_skin_edit_form extends moodleform {
         $mform->setType('html', PARAM_RAW);
 
     }
+    /**
+     * Sets the data before the form is displayed
+     *
+     * @param Object $skin
+     * @return void
+     */
     public function set_data($skin) {
         $this->_form->getElement('id')->setValue($skin->id);
         $this->_form->getElement('skinname')->setValue($skin->skinname ?? "");
@@ -218,7 +232,7 @@ if (!$export) {
 /**
  * Get the database record to match the current page
  *
- * @param integer $page
+ * @param int $page
  * @return \stdClass
  */
 function get_page_record(int $page) : \stdClass {
@@ -235,6 +249,12 @@ function get_page_record(int $page) : \stdClass {
     }
     return $record;
 }
+/**
+ * If no page types given, delete any existing ones
+ * Otherwise insert the ones given
+ * @param mixed $data
+ * @return void
+ */
 function  update_pagetypes($data) {
     global $DB;
     if (!$data->pagetypes) {
@@ -246,7 +266,15 @@ function  update_pagetypes($data) {
          $DB->insert_record('tool_skin_pagetype', ['skin' => $data->id, 'pagetype' => $pagetype]);
     }
 }
-function get_pagetypes($record) {
+
+/**
+ * Get the pagetypes (the skin will act on) for a given
+ * skin record
+ *
+ * @param stdClass $record
+ * @return stdClass
+ */
+function get_pagetypes(stdClass $record) {
     global $DB;
     $pagetypes = $DB->get_records_menu('tool_skin_pagetype', ['skin' => $record->id], '', 'id, pagetype');
     $pagetypes = array_combine($pagetypes, $pagetypes);
@@ -257,7 +285,12 @@ function get_pagetypes($record) {
     }
     return $record;
 }
-
+/**
+ * Down load the skin related to the given id
+ * in json format so it can be re-used
+ * @param int|null $id
+ * @return never
+ */
 function do_download(int $id = null) {
     global $DB;
     $filename = '';

@@ -15,8 +15,16 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Utilities for admin/tool/skin plugin for tweaking the UI.
+ *
+ * @package     tool_skin
+ * @copyright   2023 Marcus Green
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
  * Page callback to get any paagetype skins for this module instance.
- * @package     admin_skin
+ * @package     tool_skin
  * @copyright   2023 Marcus Green
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -134,6 +142,12 @@ function get_skins(string $pagetype) :array {
     $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype]);
     return $skins;
 }
+/**
+ * Get unique id values for all pagetypes currently stored
+ * for this plugin
+ *
+ * @return array
+ */
 function get_distinct_pagetypes() {
     global $DB;
     $pagetypes = $DB->get_records_sql('SELECT DISTINCT pagetype FROM {tool_skin_pagetype}');

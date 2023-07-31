@@ -13,15 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace tool_skin;
+
+use coding_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once("$CFG->libdir/formslib.php");
-
+/**
+ * @package tool_skin
+ *
+ * Import skins in Json format and insert into the database.
+ */
 class import_form extends \moodleform {
-
+    /**
+     * The interface elements of the form
+     *
+     * @return void
+     * @throws coding_exception
+     */
     protected function definition() {
         $mform = $this->_form;
         $maxbytes = 2048;
@@ -41,6 +53,13 @@ class import_form extends \moodleform {
         $mform->addGroup($navbuttons);
 
     }
+    /**
+     * Take in a json string, convert to an object
+     * and write to the tables
+     *
+     * @param string $json
+     * @return void
+     */
     public function process_json(string $json) {
         $jsonobject = json_decode($json, false);
         global $DB;

@@ -25,7 +25,6 @@
 /**
  * Install some example skins
  */
-
 function xmldb_tool_skin_install() {
     global $DB, $CFG;
     $filecontent = file_get_contents($CFG->dirroot."/admin/tool/skin/db/skins.json");
