@@ -26,10 +26,10 @@
 require_once('../../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir.'/formslib.php');
+require_once(__DIR__.'../../lib.php');
 
 use tool_skin\import_form;
 use tool_skin\utils;
-
 
 $page   = optional_param('page', 0, PARAM_INT);
 $newrecord = optional_param('newrecord', '', PARAM_TEXT);
@@ -150,7 +150,7 @@ class tool_skin_edit_form extends moodleform {
 $importform = new  import_form();
 if ($data = $importform->get_data()) {
     $content = $importform->get_file_content('jsonfile');
-    $importform->process_json($content);
+    import_json($content);
 }
 $recordcount = $DB->count_records('tool_skin');
 

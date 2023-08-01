@@ -53,23 +53,5 @@ class import_form extends \moodleform {
         $mform->addGroup($navbuttons);
 
     }
-    /**
-     * Take in a json string, convert to an object
-     * and write to the tables
-     *
-     * @param string $json
-     * @return void
-     */
-    public function process_json(string $json) {
-        $jsonobject = json_decode($json, false);
-        global $DB;
-        foreach ($jsonobject as $field) {
-            $pagetypes = $field->pagetype;
-            unset($field->pagetype);
-            $skinid = $DB->insert_record('tool_skin', $field);
-            foreach ($pagetypes as $pagetype) {
-                $DB->insert_record('tool_skin_pagetype', ['skin' => $skinid, 'pagetype' => $pagetype]);
-            }
-        }
-    }
+
 }

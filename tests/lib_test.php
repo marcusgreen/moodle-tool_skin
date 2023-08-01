@@ -33,7 +33,6 @@ require_once(__DIR__.'/../lib.php');
  * Test tool_skin functions
  */
 class lib_test extends \advanced_testcase {
-
     /**
      * Parse javascript for get_strings like php
      * @covers ::php_get_string()
@@ -43,5 +42,32 @@ class lib_test extends \advanced_testcase {
         $content = "get_string('pluginname', 'tool_skin)";
         $returnstring = php_get_string($content);
         $this->assertEquals("Page skin", $returnstring);
+    }
+    /**
+     * Parse javascript for get_strings like php
+     * @covers ::import_json()
+     * @return void
+     */
+    public function test_get_pagetype() {
+        global $DB;
+        $this->resetAfterTest();
+        $count = $DB->count_records('tool_skin');
+        // Two records on install;
+        $this->assertEquals(2, $count);
+        $DB->delete_records('tool_skin');
+
+         $skin[] = (Object) [
+            'skinname' => 'Test skin',
+            'tag' => 'test tag',
+            'javascript' => 'alert("hello world")',
+            'CSS' => 'some css',
+            'html' => '<h1>Hello</h1>',
+            'pagetype' => ['mod-quiz-attempt', 'question-bank'],
+         ];
+         $json = json_encode($skin, JSON_PRETTY_PRINT);
+         import_json($json);
+         $count = $DB->count_records('tool_skin');
+         $this->assertEquals(1, $count);
+
     }
 }

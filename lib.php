@@ -142,6 +142,27 @@ function get_skins(string $pagetype) :array {
     $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype]);
     return $skins;
 }
+
+/**
+ * Take in a json string, convert to an object
+ * and write to the tables
+ *
+ * @param string $json
+ * @return void
+ */
+function import_json(string $json) : bool {
+    $jsonobject = json_decode($json, false);
+    global $DB;
+    foreach ($jsonobject as $field) {
+        $pagetypes = $field->pagetype;
+        unset($field->pagetype);
+        $skinid = $DB->insert_record('tool_skin', $field);
+        foreach ($pagetypes as $pagetype) {
+            $DB->insert_record('tool_skin_pagetype', ['skin' => $skinid, 'pagetype' => $pagetype]);
+        }
+    }
+    return true;
+}
 /**
  * Get unique id values for all pagetypes currently stored
  * for this plugin

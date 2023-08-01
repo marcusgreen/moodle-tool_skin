@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_skin';
 $plugin->release = '0.1.0';
-$plugin->version = 2023031203;
+$plugin->version = 2023031204;
 $plugin->requires = 2021051700;
 $plugin->maturity = MATURITY_ALPHA;
