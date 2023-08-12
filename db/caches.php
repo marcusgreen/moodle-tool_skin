@@ -28,5 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 $definitions = [
     'skindata' => [
         'mode' => cache_store::MODE_SESSION,
+    ],
+    'usercohorts' => [
+        'mode' => cache_store::MODE_SESSION,
     ]
 ];

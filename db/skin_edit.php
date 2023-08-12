@@ -27,9 +27,9 @@ require_once('../../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir.'/formslib.php');
 require_once(__DIR__.'../../lib.php');
+require_once("$CFG->dirroot/cohort/lib.php");
 
 use tool_skin\import_form;
-use tool_skin\utils;
 
 $page   = optional_param('page', 0, PARAM_INT);
 $newrecord = optional_param('newrecord', '', PARAM_TEXT);
@@ -66,7 +66,7 @@ class tool_skin_edit_form extends moodleform {
      * Interface elements of the editing form.
      */
     protected function definition() {
-        global $PAGE;
+        global $PAGE, $COURSE;
         $mform = $this->_form;
         // Add the popup CSS hints on pressing ctrl space.
         $PAGE->requires->css('/admin/tool/skin/amd/src/codemirror/lib/codemirror.css');
@@ -89,8 +89,7 @@ class tool_skin_edit_form extends moodleform {
 
         $mform->setExpanded('importexportheader', false);
 
-        $mform->addElement('submit', 'import', get_string('skinedit:import', 'tool_skin'));
-        $mform->addHelpButton('import', 'skinedit:import', 'tool_skin');
+        $mform->addElement('static', 'importform', '', '<a href=import.php><div class="btn btn-primary">Import</div></a>    ');
 
         $mform->addElement('submit', 'export', get_string('skinedit:export', 'tool_skin'));
         $mform->addHelpButton('export', 'skinedit:export', 'tool_skin');
@@ -110,13 +109,25 @@ class tool_skin_edit_form extends moodleform {
 
         $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
         $pagetypes = array_combine($pagetypes, $pagetypes);
+        // $pagetypes = ["mod-quiz-attempt", "mod-quiz-review"];
         $mform->addElement('autocomplete', 'pagetypes', get_string('skinedit:pagetype', 'tool_skin') , $pagetypes, $options);
         $mform->addHelpButton('pagetypes', 'skinedit:pagetype', 'tool_skin');
-        $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'server');
+        // $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'server');
 
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
         $mform->addHelpButton('tag', 'skinedit:tag', 'tool_skin');
+
+        $allcohorts = cohort_get_all_cohorts();
+        $cohorts[''] = ''; ;
+
+        foreach ($allcohorts['cohorts'] as $cohort) {
+            $cohorts[$cohort->id] = $cohort->name;
+        }
+
+        $mform->addElement('select', 'cohort', 'Cohort', $cohorts);
+        $mform->addHelpButton('cohort', 'skinedit:cohort', 'tool_skin');
+        $mform->setType('cohort', PARAM_RAW);
 
         $mform->addElement('textarea', 'css', get_string('skinedit:css', 'tool_skin'), ['rows' => 15, 'cols' => 80]);
         $mform->addHelpButton('css', 'skinedit:css', 'tool_skin');
@@ -140,11 +151,12 @@ class tool_skin_edit_form extends moodleform {
     public function set_data($skin) {
         $this->_form->getElement('id')->setValue($skin->id);
         $this->_form->getElement('skinname')->setValue($skin->skinname ?? "");
+        $this->_form->getElement('cohort')->setValue($skin->cohort ?? "");
         $this->_form->getElement('tag')->setValue($skin->tag ?? "");
         $this->_form->getElement('css')->setValue($skin->css ?? "");
         $this->_form->getElement('javascript')->setValue($skin->javascript ?? "");
         $this->_form->getElement('html')->setValue($skin->html ?? "");
-        $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
+        //$this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
 }
 $importform = new  import_form();
@@ -155,7 +167,7 @@ if ($data = $importform->get_data()) {
 $recordcount = $DB->count_records('tool_skin');
 
 if ($recordcount == 0 || $newrecord) {
-    $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'css' => '']);
+    $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'cohort' => '', 'css' => '']);
     $record = $DB->get_record('tool_skin', ['id' => $id]);
     $page = $DB->count_records('tool_skin');
     $page --;
@@ -172,7 +184,7 @@ if ($delete ) {
     $record = get_page_record($page);
     $recordcount = $DB->count_records('tool_skin');
     if ($recordcount == 0) {
-        $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'css' => '']);
+        $id = $DB->insert_record('tool_skin', (object) ['skinname' => '', 'cohort' => '', 'css' => '']);
         $record = $DB->get_record('tool_skin', ['id' => $id]);
         $recordcount = 1;
     }
@@ -188,6 +200,7 @@ if ($data = $mform->get_data()) {
             $params = [
                 'id' => $data->id,
                 'skinname' => $data->skinname,
+                'cohort' => $data->cohort,
                 'tag' => $data->tag,
                 'css' => $data->css,
                 'javascript' => $data->javascript,

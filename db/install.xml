@@ -8,6 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="skinname" TYPE="char" LENGTH="35" NOTNULL="false" SEQUENCE="false" COMMENT="Name used to refer to this skin"/>
+        <FIELD NAME="cohort" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Cohort: site wide groups" />
         <FIELD NAME="tag" TYPE="char" LENGTH="35" NOTNULL="false" SEQUENCE="false" COMMENT="Tag that will bring in this code"/>
         <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="javascript" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
