@@ -58,33 +58,29 @@ function tool_skin_before_footer() {
 
     // $usercohorts = cohort_get_user_cohorts($USER->id, true);
 
-
     $cohortskins = get_cohort_skins();
 
     $skins = get_pagetype_skins($PAGE->pagetype);
+    // $skins = array_merge($skins,$cohortskins);
     // $skins = array_merge($skins, get_skins($plugintype));
 
-    foreach ($skins as $skin) {
-        $skintags[] = $skin->tag;
-    }
+    // foreach ($skins as $skin) {
+    //     $skintags[] = $skin->tag;
+    // }
 
+    // $content = '';
+    // return true;
+    // $plugintags = get_plugintags($skintags, $cmid);
+
+    // if (empty($plugintags)) {
+    //     return false;
+    // }
     $content = '';
-    return true;
-    $plugintags = get_plugintags($skintags, $cmid);
-
-    if (empty($plugintags)) {
-        return false;
-    }
-
     if ($skins) {
         foreach ($skins as $skin) {
-            foreach ($plugintags as $tag) {
-                if ($skin->tag == $tag->tagname) {
-                    $content .= $skin->html. PHP_EOL;
+                     $content .= $skin->html. PHP_EOL;
                      $content .= '<script>'.$skin->javascript. '</script>'.PHP_EOL;
                      $content .= '<style>'.$skin->css. '</style>'.PHP_EOL;
-                }
-            }
         }
     }
 
@@ -120,6 +116,52 @@ function get_plugintags($skintags, $cmid){
     $plugintags = $DB->get_records_sql($sql, $inparams);
     return $plugintags;
 }
+
+function get_cohort_skins() {
+    global $DB, $USER, $PAGE;
+    $sql = 'SELECT skin.id, tag, pagetype, javascript, css, html, cohort
+            FROM {tool_skin} skin
+            JOIN {cohort_members} cm
+            ON skin.cohort=cm.id
+            LEFT JOIN {tool_skin_pagetype} pagetype
+            ON pagetype.skin = skin.id
+            AND cm.userid = :userid';
+    $cohortskins = $DB->get_records_sql($sql, ['userid' => $USER->id]);
+    foreach ($cohortskins as $key => $skin) {
+        if ($skin->pagetype) {
+            if ($skin->pagetype !== $PAGE->pagetype) {
+                unset($cohortskins[$key]);
+            }
+        }
+    }
+        return $cohortskins;
+}
+
+
+/**
+ * Get skins avilable for this pagetype
+ *
+ * @param string $pagetype
+ * @return void
+ *
+ */
+function get_pagetype_skins(string $pagetype) :array {
+    $parts = explode('-', $pagetype);
+    $plugintype = $parts[0].'-'.$parts[1];
+
+    global $DB;
+    $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
+            JOIN {tool_skin_pagetype} pagetype
+            ON skin.id = pagetype.skin
+            WHERE pagetype.pagetype  IN (
+            SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
+                pagetype.pagetype =  :pagetype or pagetype.pagetype = :plugintype
+            )';
+
+    $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype, 'plugintype' => $plugintype]);
+    return $skins;
+}
+
 /**
  * Give javascript some of the Moodle core
  * get_string capability
@@ -145,40 +187,6 @@ function php_get_string(string $content) {
         $content = str_replace($toreplace, $string, $content);
     }
     return trim($content, '"');
-}
-
-function get_cohort_skins() {
-        global $DB, $USER;
-        $sql = 'SELECT skin.id, tag, javascript, css, html, cohort FROM {tool_skin} skin
-                JOIN {cohort_members} cm
-                ON skin.cohort=cm.id
-                AND cm.userid = :userid';
-        $cohortskins = $DB->get_records_sql($sql, ['userid' => $USER->id]);
-        return $cohortskins;
-}
-
-/**
- * Get skins avilable for this pagetype
- *
- * @param string $pagetype
- * @return void
- *
- */
-function get_pagetype_skins(string $pagetype) :array {
-    $parts = explode('-', $pagetype);
-    $plugintype = $parts[0].'-'.$parts[1];
-
-    global $DB;
-    $sql = 'SELECT skin.id, tag, javascript, css, html FROM {tool_skin} skin
-            JOIN {tool_skin_pagetype} pagetype
-            ON skin.id = pagetype.skin
-            WHERE pagetype.pagetype  IN (
-            SELECT pagetype FROM {tool_skin_pagetype} pagetype WHERE
-                pagetype.pagetype =  :pagetype or pagetype.pagetype = :plugintype
-            )';
-
-    $skins = $DB->get_records_sql($sql, ['pagetype' => $pagetype, 'plugintype' => $plugintype]);
-    return $skins;
 }
 
 /**

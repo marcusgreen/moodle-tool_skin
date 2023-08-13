@@ -156,7 +156,7 @@ class tool_skin_edit_form extends moodleform {
         $this->_form->getElement('css')->setValue($skin->css ?? "");
         $this->_form->getElement('javascript')->setValue($skin->javascript ?? "");
         $this->_form->getElement('html')->setValue($skin->html ?? "");
-        //$this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
+        $this->_form->getElement('pagetypes')->setValue($skin->pagetypes);
     }
 }
 $importform = new  import_form();
