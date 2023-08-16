@@ -34,7 +34,6 @@ function tool_skin_before_footer() {
     global $PAGE, $USER, $DB;
     $cmid = optional_param('cmid', null, PARAM_INT);
     $id = optional_param('id', null , PARAM_INT);
-    // function cohort_is_member($cohortid, $userid) {
 
     $cmid = $cmid ?? $id;
     $cache = cache::make('tool_skin', 'skindata');
@@ -42,53 +41,22 @@ function tool_skin_before_footer() {
         $pagetypes = get_distinct_pagetypes();
         $cache->set('pagetypes', $pagetypes);
     }
-    xdebug_break();
 
     $allskins = get_all_skins();
     $skins = filter_by_cohort($allskins);
     $skins = filter_by_pagetype($skins);
     $skins = filter_by_tag($skins, $cmid);
+    // [$insql, $inparams] = $DB->get_in_or_equal(array_keys($skins));
+    // $sql = "SELECT * FROM {tool_skin} WHERE id $insql";
+    // $someskin = $DB->get_records_sql($sql, $inparams);
 
-
-
-    $i=1;
-    // $parts = explode('-', $PAGE->pagetype);
-    // $plugintype = $parts[0].'-'.$parts[1];
-
-    // Bail out if there are no skins with pagetype, or plugins with pagetype.
-    // $pagetypeskins = in_array($PAGE->pagetype, $pagetypes);
-    // $plugintypeskins = in_array($plugintype, $pagetypes);
-
-    // if (!$pagetypeskins && !$plugintypeskins) {
-    //     return '';
-    // }
-    // https://docs.moodle.org/dev/Cache_API
-
-    // $usercohorts = cohort_get_user_cohorts($USER->id, true);
-   // $plugintags = get_plugintags($cmid);
-    //$cohortskins = get_cohort_skins($cmid);
-
-   // $skins = get_pagetype_skins($PAGE->pagetype);
-    // $skins = array_merge($skins,$cohortskins);
-    // $skins = array_merge($skins, get_skins($plugintype));
-
-    // foreach ($skins as $skin) {
-    //     $skintags[] = $skin->tag;
-    // }
-
-    // $content = '';
-    // return true;
-    // $plugintags = get_plugintags($skintags, $cmid);
-
-    // if (empty($plugintags)) {
-    //     return false;
-    // }
     $content = '';
     if ($skins) {
         foreach ($skins as $skin) {
-                     $content .= $skin->html. PHP_EOL;
-                     $content .= '<script>'.$skin->javascript. '</script>'.PHP_EOL;
-                     $content .= '<style>'.$skin->css. '</style>'.PHP_EOL;
+                     $record = $DB->get_record('tool_skin', ['id' => $skin->id]);
+                     $content .= $record->html. PHP_EOL;
+                     $content .= '<script>'.$record->javascript. '</script>'.PHP_EOL;
+                     $content .= '<style>'.$record->css. '</style>'.PHP_EOL;
         }
     }
 
