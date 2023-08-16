@@ -36,6 +36,7 @@ function tool_skin_before_footer() {
     $id = optional_param('id', null , PARAM_INT);
 
     $cmid = $cmid ?? $id;
+    show_pagetype();
     $cache = cache::make('tool_skin', 'skindata');
     if (($pagetypes = $cache->get('pagetypes')) === false) {
         $pagetypes = get_distinct_pagetypes();
