@@ -109,10 +109,8 @@ class tool_skin_edit_form extends moodleform {
 
         $pagetypes = array_map('trim', explode(',', get_config('tool_skin', 'pagetypes')));
         $pagetypes = array_combine($pagetypes, $pagetypes);
-        // $pagetypes = ["mod-quiz-attempt", "mod-quiz-review"];
         $mform->addElement('autocomplete', 'pagetypes', get_string('skinedit:pagetype', 'tool_skin') , $pagetypes, $options);
         $mform->addHelpButton('pagetypes', 'skinedit:pagetype', 'tool_skin');
-        // $mform->addRule('pagetypes',  get_string("skinedit:pagetype_required", 'tool_skin'), 'required', '', 'server');
 
         $mform->addElement('text', 'tag', get_string('tag'));
         $mform->setType('tag', PARAM_TEXT);
