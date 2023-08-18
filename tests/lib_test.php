@@ -59,7 +59,7 @@ class lib_test extends \advanced_testcase {
          $skin[] = (Object) [
             'skinname' => 'Test skin',
             'tag' => 'test tag',
-            'cohort' => ''
+            'cohort' => '',
             'javascript' => 'alert("hello world")',
             'CSS' => 'some css',
             'html' => '<h1>Hello</h1>',
