@@ -1,3 +1,4 @@
+# Do not use, this repo has been replaced by https://github.com/marcusgreen/moodle-tool_tweak
 # Moodle Page skin tool plugin by Marcus Green
 
 Page skins, slightly like a mini theme.
